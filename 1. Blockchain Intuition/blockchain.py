@@ -1,3 +1,4 @@
+# Part 1: Create block chain
 import datetime
 import hashlib
 import json
@@ -6,9 +7,9 @@ from flask import Flask, jsonify
 class Blockchain:
     def __init__(self):
         self.chain = []
-        self.Create_Block(proof = 1, previous_hash = '0')
+        self.create_block(proof = 1, previous_hash = '0')
 
-    def Create_Block(self, proof, previous_hash):
+    def create_block(self, proof, previous_hash):
         block = {'index' : len(self.chain) + 1,
                  'timestamp': str(datetime.datetime.now),
                  'proof': proof,
@@ -16,10 +17,10 @@ class Blockchain:
         self.chain.append(block)
         return block
 
-    def get_Previous_Block(self):
+    def get_previous_block(self):
         return self.chain[-1]
     
-    def Proof_Work(self, previous_proof):
+    def proof_of_work(self, previous_proof):
         new_proof = 1
         check_proof = False
         while check_proof is False:
@@ -50,4 +51,26 @@ class Blockchain:
             block_index += 1
         return True
     
+# Part 2: mining block chain
+
+# Creating a web app
+app = Flask(__name__)
+bc = Blockchain()
+
+# Mine a new block
+@app.route('/mine_block', methods = ['GET'])
+def mine_block():
+    previous_block = bc.get_previous_block()
+    previous_proof = previous_block['proof']
+    proof = bc.proof_of_work(previous_proof)
+    previous_hash = bc.hash(previous_block)
+    block = bc.create_block(proof, previous_hash)
+    response = {"message": "Congratulations, you just mind a block",
+                "index": block["index"], # length of block chain
+                "timestamp": block["timestamp"],
+                "proof": block["proof"], #was set from proof passed in create_block
+                "previous_hash": block["previous_hash"]}# was set from previous hash passed in create block
+    return jsonify(response), 200
     
+
+
