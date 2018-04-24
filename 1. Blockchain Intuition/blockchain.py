@@ -72,5 +72,12 @@ def mine_block():
                 "previous_hash": block["previous_hash"]}# was set from previous hash passed in create block
     return jsonify(response), 200
     
+# Getting the full block chain
+@app.route('/get_chain', methods = ['GET'])
+def get_chain():
+    response = {"chain": bc.chain,
+                "length": len(bc.chain)}
+    return jsonify(response), 200
+
 
 
