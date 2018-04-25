@@ -32,7 +32,7 @@ class Blockchain:
         return new_proof
 
     def hash(self, block):
-        encoded_block = json.dump(block, fp = True, sort_keys = True).encode()
+        encoded_block = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
 
     def is_chain_valid(self, chain):
@@ -40,14 +40,14 @@ class Blockchain:
         block_index = 1
         while block_index < len(chain):
             block = chain[block_index]
-            if block['previous_hash'] != hash(previous_block):
+            if block['previous_hash'] != self.hash(previous_block):
                 return False
             previous_proof = previous_block['proof']
             proof = block['proof']
             hash_operation = hashlib.sha256(str(proof ** 2 - previous_proof ** 2).encode()).hexdigest()
             if hash_operation[:4] != '0000':
                 return False
-            previous_block = block[block_index]
+            previous_block = chain[block_index]
             block_index += 1
         return True
     
@@ -65,7 +65,7 @@ def mine_block():
     proof = bc.proof_of_work(previous_proof)
     previous_hash = bc.hash(previous_block)
     block = bc.create_block(proof, previous_hash)
-    response = {"message": "Congratulations, you just mind a block",
+    response = {"message": "Congratulations, you just mined a block",
                 "index": block["index"], # length of block chain
                 "timestamp": block["timestamp"],
                 "proof": block["proof"], #was set from proof passed in create_block
@@ -79,8 +79,18 @@ def get_chain():
                 "length": len(bc.chain)}
     return jsonify(response), 200
 
+# Check if the block chain is valid
+@app.route('/is_valid', methods = ['GET'])
+def is_valid():
+    checkvalid = bc.is_chain_valid(bc.chain)
+    msg = "Chain is valid"
+    if checkvalid is False:
+        msg = "Chain is not valid"
+    response = {"message": msg}
+    return jsonify(response), 200
+
 # Running the app
-app.run(host='0.0.0.0', port=5000)
+app.run()#host='127.0.0.1', port=5000)
 
 
 
