@@ -2,8 +2,8 @@
 import datetime
 import hashlib
 import json
-from flask import Flask, jsonify
-
+from flask import Flask, jsonify, request
+import requests
 class Blockchain:
     def __init__(self):
         self.chain = []
