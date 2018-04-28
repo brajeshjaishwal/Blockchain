@@ -4,6 +4,10 @@ import hashlib
 import json
 from flask import Flask, jsonify, request
 import requests
+from uuid import uuid4
+from urllib.parse import urlparse
+
+# Creating a block chain
 class Blockchain:
     def __init__(self):
         self.chain = []
@@ -51,7 +55,7 @@ class Blockchain:
             block_index += 1
         return True
     
-# Part 2: mining block chain
+# Part 2: Mining our block chain
 
 # Creating a web app
 app = Flask(__name__)
@@ -92,5 +96,6 @@ def is_valid():
 # Running the app
 app.run()#host='127.0.0.1', port=5000)
 
+# 3. Creating a decentralized blockchain
 
 
